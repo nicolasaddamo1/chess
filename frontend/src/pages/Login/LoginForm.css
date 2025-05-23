@@ -1,0 +1,93 @@
+body {
+  background-color: black;
+}
+.form-container {
+  width: 563px;
+  background-color: rgb(245, 226, 160);
+  color: black;
+  border-style: solid;
+  border-width: 1rem;
+  border-color: rgb(40, 40, 40);
+}
+
+.logo img {
+  width: 100%;
+}
+
+.container-input {
+  display: block;
+  width: 100%;
+  align-items: center;
+}
+.container-input label {
+  font-size: 2rem;
+}
+
+.container-input input {
+  font-family: "Agency FB";
+  font-weight: 700;
+  text-align: center;
+  color: aliceblue;
+  width: 90%;
+  font-size: 2rem;
+
+  height: 31px;
+  padding: 5px;
+  border: none;
+  background-color: rgb(40, 40, 40);
+}
+
+.container-pasword-img {
+  margin-left: 5%;
+  display: flex;
+  width: 100%;
+}
+.container-input img {
+  width: 3rem;
+  height: 2.55rem;
+}
+
+.container-buttons {
+  margin-top: 1rem;
+  display: flex;
+  width: 90%;
+  display: inline-flex;
+  gap: 20px;
+  text-align: center;
+  font-size: 2rem;
+}
+.btn-gray {
+  background-color: rgb(83, 77, 60);
+  color: rgb(245, 226, 160);
+  width: 60%;
+}
+
+.btn-red {
+  background-color: rgb(230, 71, 52);
+  padding: 0;
+  width: 40%;
+  font-size: 1.5rem;
+}
+
+.links {
+  text-align: center;
+  margin-top: 30px;
+  text-align: initial;
+  margin-left: 8rem;
+}
+
+.links span {
+  font-family: "Agency FB", sans-serif;
+  font-size: 1.5rem;
+  color: #101010;
+  display: inline-block;
+  margin-bottom: 2rem;
+}
+
+.links a {
+  color: #cc2727;
+
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 1.5rem;
+}

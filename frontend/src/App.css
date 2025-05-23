@@ -4,6 +4,17 @@
   padding: 2rem;
   text-align: center;
 }
+@font-face {
+  font-family: "Agency FB";
+  src: url("../src/assets/fonts/AGENCYB.TTF") format("woff2"),
+    url("../src/assets/fonts/AGENCYB.TTF") format("woff");
+  font-weight: normal;
+  font-style: normal;
+}
+
+body {
+  font-family: "Agency FB";
+}
 
 .logo {
   height: 6em;

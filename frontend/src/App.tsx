@@ -1,5 +1,6 @@
 import "./App.css";
-import Home from "./components/Home/Home";
+//import Home from "./components/Home/Home";
+import TournamentForm from "./components/TournamentForm/TournamentForm";
 //import LoginForm from "./components/Login/LoginForm";
 //import RegisterForm from "./components/RegisterForm/RegisterForm";
 //import TournamentForm from "./components/TournamentForm/TournamentForm";
@@ -8,7 +9,8 @@ import Home from "./components/Home/Home";
 function App() {
   return (
     <>
-      <Home />
+      <TournamentForm />
+      {/* <Home /> */}
       {/* <LoginForm />*/}
 
       {/*<RegisterForm />  */}

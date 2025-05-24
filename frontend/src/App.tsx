@@ -1,8 +1,8 @@
 import "./App.css";
-import RegisterForm from "./pages/RegisterForm/RegisterForm";
+// import RegisterForm from "./pages/RegisterForm/RegisterForm";
 import TournamentForm from "./pages/TournamentForm/TournamentForm";
-import Home from "./pages/Home/Home";
-import LoginForm from "./pages/Login/LoginForm";
+// import Home from "./pages/Home/Home";
+// import LoginForm from "./pages/Login/LoginForm";
 import { Route, BrowserRouter, Routes } from "react-router-dom";
 
 function App() {
@@ -10,9 +10,9 @@ function App() {
     <>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Home />} />
+          {/* <Route path="/" element={<Home />} />
           <Route path="/login" element={<LoginForm />} />
-          <Route path="/register" element={<RegisterForm />} />
+          <Route path="/register" element={<RegisterForm />} /> */}
           <Route path="/tournament" element={<TournamentForm />} />
         </Routes>
       </BrowserRouter>

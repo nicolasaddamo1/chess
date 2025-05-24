@@ -1,95 +1,219 @@
-import React, { useState } from "react";
-import { useEffect } from "react";
-import "./TournamentForm.css";
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import './Torneos.css';
 
-const TournamentForm = () => {
-  const [tournamentName, setTournamentName] = useState("");
-  const [description, setDescription] = useState("");
-  const [mode, setMode] = useState("");
-  const [startDate, setStartDate] = useState("");
-  const [startTime, setStartTime] = useState("");
-  const [players, setPlayers] = useState(16);
-  const [prize, setPrize] = useState("5000 PTS");
-  useEffect(() => {
-    document.body.classList.add("#root");
+// Definición de tipos
+type Premios = {
+    primerPuesto: number;
+    segundoPuesto: number;
+};
 
-    return () => {
-      document.body.classList.remove("#root");
+type Torneo = {
+    id: number;
+    nombre: string;
+    fechaInicio: string;
+    modo: string;
+    premios: Premios;
+};
+
+type Encuentro = {
+    jugador1: string;
+    jugador2: string;
+    estado: string;
+};
+
+type TorneoDetalle = {
+    id: number;
+    nombre: string;
+    participantes: string[];
+    puntos: number;
+    encuentros: Encuentro[];
+    logoEmpresa: string;
+};
+
+type VistaTorneo = 'empty' | 'list' | 'detail';
+
+const TournamentForm: React.FC = () => {
+    const [view, setView] = useState<VistaTorneo>('list');
+    const [torneos, setTorneos] = useState<Torneo[]>([]);
+    const [selectedTorneo, setSelectedTorneo] = useState<TorneoDetalle | null>(null);
+    const [loading, setLoading] = useState<boolean>(true);
+    const navigate = useNavigate();
+
+    // Fetch para obtener lista de torneos
+    useEffect(() => {
+        const fetchTorneos = async () => {
+            try {
+                const response = await fetch('/api/torneos');
+                const data: Torneo[] = await response.json();
+
+                if (data.length === 0) {
+                    setView('empty');
+                } else {
+                    setTorneos(data);
+                    setView('list');
+                }
+            } catch (error) {
+                console.error('Error fetching torneos:', error);
+                setView('empty');
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchTorneos();
+    }, []);
+
+    // Handler para ver detalles de un torneo
+    const handleViewTorneo = async (torneoId: number) => {
+        try {
+            const response = await fetch(`/api/torneos/${torneoId}`);
+            const data: TorneoDetalle = await response.json();
+
+            setSelectedTorneo(data);
+            setView('detail');
+        } catch (error) {
+            console.error('Error fetching torneo details:', error);
+        }
     };
-  }, []);
 
-  const handleCreate = () => {
-    console.log("Torneo creado:", {
-      tournamentName,
-      description,
-      mode,
-      startDate,
-      startTime,
-      players,
-      prize,
-    });
-  };
+    // Handler para crear nuevo torneo
+    const handleCreateTorneo = async (nuevoTorneo: Omit<Torneo, 'id'>) => {
+        try {
+            const response = await fetch('/api/torneos', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(nuevoTorneo),
+            });
 
-  return (
-    <section className="tournament-form">
-      <h2>CREAR TORNEO</h2>
-      <div className="form-group1">
-        <input type="text" id="nombre-torneo" placeholder="NOMBRE TORNEO" />
-        <select value={mode} onChange={(e) => setMode(e.target.value)}>
-          <option value="">MODO</option>
-          <option value="modo-1">Modo 1</option>
-          <option value="modo-2">Modo 2</option>
-        </select>
-      </div>
-      <div className="form-group2">
-        <input type="text" id="description" placeholder="DESCRIPCIÓN" />
+            const data: Torneo = await response.json();
+            setTorneos([...torneos, data]);
+            setView('list');
+        } catch (error) {
+            console.error('Error creating torneo:', error);
+        }
+    };
 
-        <div className="form-group2-2">
-          <div className="form-group">
-            <label>FECHA INICIO</label>
-            <input
-              type="date"
-              value={startDate}
-              onChange={(e) => setStartDate(e.target.value)}
-            />
-          </div>
-          <div className="form-group">
-            <label>HORA INICIO</label>
-            <input
-              type="time"
-              value={startTime}
-              onChange={(e) => setStartTime(e.target.value)}
-            />
-          </div>
-          <div className="form-group">
-            <label>JUGADORES</label>
-            <input
-              type="number"
-              value={players}
-              onChange={(e) => setPlayers(parseInt(e.target.value, 10))}
-            />
-          </div>
-          <div className="form-group">
-            <label>PREMIO</label>
-            <input
-              type="text"
-              value={prize}
-              onChange={(e) => setPrize(e.target.value)}
-            />
-          </div>
+    // Handler para volver atrás
+    const handleBack = () => {
+        if (view === 'detail') {
+            setView('list');
+        } else {
+            navigate('/home');
+        }
+    };
+
+    if (loading) {
+        return <div>Cargando...</div>;
+    }
+
+    return (
+        <div className="torneos-container">
+            {/* Header con botón de volver */}
+            <header className="torneos-header">
+                <button onClick={handleBack} className="back-button">
+                    ←
+                </button>
+                <button>🐞</button>
+                <button>ℹ</button>
+                <button>📜</button>
+                <button>⚙</button>
+            </header>
+
+            {/* Contenido principal según la vista */}
+            <main className="torneos-main">
+                {view === 'empty' && (
+                    <div className="empty-state">
+                        <p>No hay torneos disponibles</p>
+                        <button
+                            onClick={() => handleCreateTorneo({
+                                nombre: 'Nuevo Torneo',
+                                fechaInicio: new Date().toLocaleString(),
+                                modo: 'Standard',
+                                premios: {
+                                    primerPuesto: 5000,
+                                    segundoPuesto: 1000
+                                }
+                            })}
+                            className="create-button"
+                        >
+                            CREAR
+                        </button>
+                    </div>
+                )}
+
+                {view === 'list' && (
+                    <div className="torneos-list">
+                        {torneos.map((torneo) => (
+                            <div
+                                key={torneo.id}
+                                className="torneo-card"
+                                onClick={() => handleViewTorneo(torneo.id)}
+                            >
+                                <h3>{torneo.nombre}</h3>
+                                <div className="torneo-info">
+                                    <p><strong>FECHA DE INICIO:</strong> {torneo.fechaInicio}</p>
+                                    <p><strong>MODO:</strong> {torneo.modo}</p>
+                                    <p><strong>PREMIOS:</strong></p>
+                                    <ul>
+                                        <li>1er puesto: {torneo.premios.primerPuesto} pts</li>
+                                        <li>2do puesto: {torneo.premios.segundoPuesto} pts</li>
+                                    </ul>
+                                </div>
+                                <div className="torneo-actions">
+                                    <button className="view-button">👁️</button>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                )}
+
+                {view === 'detail' && selectedTorneo && (
+                    <div className="torneo-detail">
+                        <section className="participants-section">
+                            <h2>PARTICIPANTES</h2>
+                            <ul>
+                                {selectedTorneo.participantes.map((participante, index) => (
+                                    <li key={index}>{participante}</li>
+                                ))}
+                            </ul>
+                        </section>
+
+                        <section className="points-section">
+                            <h2>PUNTOS</h2>
+                            <p>{selectedTorneo.puntos}</p>
+                        </section>
+
+                        <section className="matches-section">
+                            <h2>ENCUENTROS EN PROGRESO</h2>
+                            {selectedTorneo.encuentros.map((encuentro, index) => (
+                                <div key={index} className="match">
+                                    <span>{encuentro.jugador1}</span>
+                                    <span>VS</span>
+                                    <span>{encuentro.jugador2}</span>
+                                </div>
+                            ))}
+                        </section>
+
+                        <section className="logo-section">
+                            <h2>LOGO EMPRESA</h2>
+                            <img src={selectedTorneo.logoEmpresa} alt="Logo empresa" />
+                        </section>
+                    </div>
+                )}
+            </main>
+
+            {/* Footer con botones */}
+            <footer className="torneos-footer">
+                <button>🏆</button>
+                <button>🤲</button>
+                <button>↔</button>
+                <button>🛒</button>
+            </footer>
         </div>
-      </div>
-
-      <div className="button-group">
-        <button onClick={handleCreate} className="create-button">
-          CREAR
-        </button>
-        <button id="btn-cancelar" onClick={() => console.log("Cancelado")}>
-          CANCELAR
-        </button>
-      </div>
-    </section>
-  );
+    );
 };
 
 export default TournamentForm;

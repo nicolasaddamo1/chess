@@ -46,7 +46,7 @@ const LoginForm: React.FC = () => {
       const userData = await loginUser(email, password);
       console.log("Login exitoso:", userData);
       // Redirigir después del login exitoso
-      window.location.href = "/dashboard";
+      window.location.href = "/tournament";
     } catch (err) {
       setError(err instanceof Error ? err.message : "Error desconocido");
     }

@@ -81,25 +81,29 @@ const TournamentForm: React.FC = () => {
     };
 
     // Handler para crear nuevo torneo
-    const handleCreateTorneo = async (tournamentData: { nombre: string; modo: string; premios: { primerPuesto: number; segundoPuesto: number; } }) => {
-        const nuevoTorneo: Omit<Torneo, 'id'> = {
-            ...tournamentData,
-            fechaInicio: new Date().toISOString().split('T')[0], // Default fechaInicio
-        };
+    const handleSubmitTournament = async (tournamentData: {
+        name: string;
+        start_date: string;
+        start_time: string;
+        mode: string;
+        max_players: number;
+    }) => {
         try {
-            const response = await fetch('/api/torneos', {
-                method: 'POST',
+            const response = await fetch(`${import.meta.env.VITE_URL}/api/tournaments`, {
+                method: "POST",
                 headers: {
-                    'Content-Type': 'application/json',
+                    "Content-Type": "application/json",
                 },
-                body: JSON.stringify(nuevoTorneo),
+                body: JSON.stringify(tournamentData)
             });
 
-            const data: Torneo = await response.json();
+            if (!response.ok) throw new Error('Error al crear torneo');
+
+            const data = await response.json();
             setTorneos([...torneos, data]);
             setView('list');
         } catch (error) {
-            console.error('Error creating torneo:', error);
+            throw error; // Re-lanzamos el error para manejarlo en el modal
         }
     };
 
@@ -108,7 +112,7 @@ const TournamentForm: React.FC = () => {
         if (view === 'detail') {
             setView('list');
         } else {
-            navigate('/home');
+            navigate('/');
         }
     };
 
@@ -146,7 +150,8 @@ const TournamentForm: React.FC = () => {
                     <div className="modal-overlay">
                         <TournamentModalForm
                             onClose={() => setIsModalOpen(false)}
-                            onCreate={handleCreateTorneo}
+                            onSubmit={handleSubmitTournament}
+
                         />
                     </div>
                 )}

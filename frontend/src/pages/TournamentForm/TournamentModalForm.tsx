@@ -3,16 +3,15 @@ import { useEffect } from "react";
 import "./TournamentModalForm.css";
 type TournamentModalFormProps = {
   onClose: () => void;
-  onCreate: (tournamentData: {
-    nombre: string;
-    modo: string;
-    premios: {
-      primerPuesto: number;
-      segundoPuesto: number;
-    };
-  }) => void;
+  onSubmit: (tournamentData: {
+    name: string;
+    start_date: string;
+    start_time: string;
+    mode: string;
+    max_players: number;
+  }) => Promise<void>; // Cambio aquí
 };
-const TournamentModalForm = ({ onClose, onCreate }: TournamentModalFormProps) => {
+const TournamentModalForm = ({ onClose, onSubmit }: TournamentModalFormProps) => {
   const [tournamentName, setTournamentName] = useState("");
   const [description, setDescription] = useState("");
   const [mode, setMode] = useState("");
@@ -28,20 +27,42 @@ const TournamentModalForm = ({ onClose, onCreate }: TournamentModalFormProps) =>
     };
   }, []);
 
-  const handleCreate = (e: React.FormEvent) => {
+  const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
-    onCreate({
-      nombre: tournamentName,
-      modo: mode,
-      premios: {
-        primerPuesto: parseInt(prize.replace(" PTS", ""), 10),
-        segundoPuesto: parseInt(prize.replace(" PTS", ""), 10) / 2
+
+    try {
+      const tournamentData = {
+        name: tournamentName,
+        start_date: startDate,
+        start_time: startTime,
+        mode: mode.toLowerCase(),
+        max_players: players,
+      };
+
+      const response = await fetch(`${import.meta.env.VITE_URL}/api/tournaments`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(tournamentData)
+      });
+
+      if (!response.ok) {
+        throw new Error('Error al crear torneo');
       }
-    });
+
+      const data = await response.json();
+      console.log('Torneo creado:', data);
+
+      onClose();
+
+    } catch (error) {
+      console.error('Error:', error);
+    }
   };
 
   return (
-    <section className="tournament-form">
+    <form className="tournament-form" onSubmit={handleCreate}>
       <h2>CREAR TORNEO</h2>
       <div className="form-group1">
         <input type="text" id="nombre-torneo" placeholder="NOMBRE TORNEO" />
@@ -91,14 +112,14 @@ const TournamentModalForm = ({ onClose, onCreate }: TournamentModalFormProps) =>
       </div>
 
       <div className="button-group">
-        <button onClick={handleCreate} className="create-button">
+        <button type="submit" className="create-button">
           CREAR
         </button>
         <button id="btn-cancelar" onClick={() => console.log("Cancelado")}>
           CANCELAR
         </button>
       </div>
-    </section>
+    </form>
   );
 };
 

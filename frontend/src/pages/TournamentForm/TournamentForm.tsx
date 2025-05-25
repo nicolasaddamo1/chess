@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import TournamentModalForm from './TournamentModalForm';
 import './Torneos.css';
 
 // Definición de tipos
@@ -38,6 +39,8 @@ const TournamentForm: React.FC = () => {
     const [torneos, setTorneos] = useState<Torneo[]>([]);
     const [selectedTorneo, setSelectedTorneo] = useState<TorneoDetalle | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
+    const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+
     const navigate = useNavigate();
 
     // Fetch para obtener lista de torneos
@@ -78,7 +81,11 @@ const TournamentForm: React.FC = () => {
     };
 
     // Handler para crear nuevo torneo
-    const handleCreateTorneo = async (nuevoTorneo: Omit<Torneo, 'id'>) => {
+    const handleCreateTorneo = async (tournamentData: { nombre: string; modo: string; premios: { primerPuesto: number; segundoPuesto: number; } }) => {
+        const nuevoTorneo: Omit<Torneo, 'id'> = {
+            ...tournamentData,
+            fechaInicio: new Date().toISOString().split('T')[0], // Default fechaInicio
+        };
         try {
             const response = await fetch('/api/torneos', {
                 method: 'POST',
@@ -128,19 +135,19 @@ const TournamentForm: React.FC = () => {
                     <div className="empty-state">
                         <p>No hay torneos disponibles</p>
                         <button
-                            onClick={() => handleCreateTorneo({
-                                nombre: 'Nuevo Torneo',
-                                fechaInicio: new Date().toLocaleString(),
-                                modo: 'Standard',
-                                premios: {
-                                    primerPuesto: 5000,
-                                    segundoPuesto: 1000
-                                }
-                            })}
+                            onClick={() => (setIsModalOpen(true))}
                             className="create-button"
                         >
                             CREAR
                         </button>
+                    </div>
+                )}
+                {isModalOpen && (
+                    <div className="modal-overlay">
+                        <TournamentModalForm
+                            onClose={() => setIsModalOpen(false)}
+                            onCreate={handleCreateTorneo}
+                        />
                     </div>
                 )}
 

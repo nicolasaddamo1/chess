@@ -1,8 +1,18 @@
 import React, { useState } from "react";
 import { useEffect } from "react";
-import "./TournamentForm.css";
-
-const TournamentForm = () => {
+import "./TournamentModalForm.css";
+type TournamentModalFormProps = {
+  onClose: () => void;
+  onCreate: (tournamentData: {
+    nombre: string;
+    modo: string;
+    premios: {
+      primerPuesto: number;
+      segundoPuesto: number;
+    };
+  }) => void;
+};
+const TournamentModalForm = ({ onClose, onCreate }: TournamentModalFormProps) => {
   const [tournamentName, setTournamentName] = useState("");
   const [description, setDescription] = useState("");
   const [mode, setMode] = useState("");
@@ -18,15 +28,15 @@ const TournamentForm = () => {
     };
   }, []);
 
-  const handleCreate = () => {
-    console.log("Torneo creado:", {
-      tournamentName,
-      description,
-      mode,
-      startDate,
-      startTime,
-      players,
-      prize,
+  const handleCreate = (e: React.FormEvent) => {
+    e.preventDefault();
+    onCreate({
+      nombre: tournamentName,
+      modo: mode,
+      premios: {
+        primerPuesto: parseInt(prize.replace(" PTS", ""), 10),
+        segundoPuesto: parseInt(prize.replace(" PTS", ""), 10) / 2
+      }
     });
   };
 
@@ -92,4 +102,4 @@ const TournamentForm = () => {
   );
 };
 
-export default TournamentForm;
+export default TournamentModalForm;

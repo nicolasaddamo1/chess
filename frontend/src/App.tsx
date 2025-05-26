@@ -1,5 +1,4 @@
 import "./App.css";
-import TournamentModalForm from "./pages/TournamentForm/TournamentModalForm";
 import RegisterForm from "./pages/RegisterForm/RegisterForm";
 import Home from "./pages/Home/Home";
 import LoginForm from "./pages/Login/LoginForm";
@@ -15,7 +14,6 @@ function App() {
           <Route path="/login" element={<LoginForm />} />
           <Route path="/register" element={<RegisterForm />} />
           <Route path="/tournament" element={<TournamentForm />} />
-
         </Routes>
       </BrowserRouter>
     </>

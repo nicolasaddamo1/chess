@@ -30,7 +30,10 @@ const LoginForm: React.FC = () => {
       }
 
       const data = await response.json();
-      localStorage.setItem("authToken", data.access);
+      localStorage.setItem("authToken", data.tokens.access);
+      localStorage.setItem("refreshToken", data.tokens.refresh);
+      console.log("Token Data:", data);
+
       return data;
     } catch (error) {
       console.error("Error:", error);
@@ -45,7 +48,6 @@ const LoginForm: React.FC = () => {
     try {
       const userData = await loginUser(email, password);
       console.log("Login exitoso:", userData);
-      // Redirigir después del login exitoso
       window.location.href = "/tournament";
     } catch (err) {
       setError(err instanceof Error ? err.message : "Error desconocido");

@@ -9,9 +9,14 @@ type TournamentModalFormProps = {
     start_time: string;
     mode: string;
     max_players: number;
-  }) => Promise<void>; // Cambio aquí
+    description: string;
+    prize: string;
+
+  }) => Promise<void>;
 };
 const TournamentModalForm = ({ onClose, onSubmit }: TournamentModalFormProps) => {
+
+  const token = localStorage.getItem("authToken");
   const [tournamentName, setTournamentName] = useState("");
   const [description, setDescription] = useState("");
   const [mode, setMode] = useState("");
@@ -20,10 +25,10 @@ const TournamentModalForm = ({ onClose, onSubmit }: TournamentModalFormProps) =>
   const [players, setPlayers] = useState(16);
   const [prize, setPrize] = useState("5000 PTS");
   useEffect(() => {
-    document.body.classList.add("#root");
+    document.body.classList.add("modal-open");
 
     return () => {
-      document.body.classList.remove("#root");
+      document.body.classList.remove("modal-open");
     };
   }, []);
 
@@ -35,46 +40,67 @@ const TournamentModalForm = ({ onClose, onSubmit }: TournamentModalFormProps) =>
         name: tournamentName,
         start_date: startDate,
         start_time: startTime,
-        mode: mode.toLowerCase(),
+        mode: mode.toLocaleLowerCase(),
         max_players: players,
+        description: description,
+        prize: prize,
       };
 
-      const response = await fetch(`${import.meta.env.VITE_URL}/api/tournaments`, {
+      console.log("Enviando datos:", tournamentData); // 👈
+
+      const response = await fetch(`http://127.0.0.1:8000/api/tournaments/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
+
         },
-        body: JSON.stringify(tournamentData)
+        body: JSON.stringify(tournamentData),
       });
 
+      const responseBody = await response.text(); // 👈
+
       if (!response.ok) {
-        throw new Error('Error al crear torneo');
+        console.error("Respuesta del servidor:", responseBody);
+        throw new Error("Error al crear torneo");
       }
 
-      const data = await response.json();
-      console.log('Torneo creado:', data);
+      const data = JSON.parse(responseBody);
+      console.log("Torneo creado:", data);
 
       onClose();
-
     } catch (error) {
-      console.error('Error:', error);
+      console.error("Error:", error);
     }
   };
 
+
   return (
-    <form className="tournament-form" onSubmit={handleCreate}>
+    <form className="tournament-form" onSubmit={handleCreate} >
       <h2>CREAR TORNEO</h2>
       <div className="form-group1">
-        <input type="text" id="nombre-torneo" placeholder="NOMBRE TORNEO" />
+        <input
+          type="text"
+          id="nombre-torneo"
+          placeholder="NOMBRE TORNEO"
+          value={tournamentName}
+          onChange={(e) => setTournamentName(e.target.value)}
+        />
+
         <select value={mode} onChange={(e) => setMode(e.target.value)}>
           <option value="">MODO</option>
-          <option value="modo-1">Modo 1</option>
-          <option value="modo-2">Modo 2</option>
+          <option value="bullet">Bullet</option>
+          <option value="classical">Classical</option>
         </select>
       </div>
       <div className="form-group2">
-        <input type="text" id="description" placeholder="DESCRIPCIÓN" />
-
+        <input
+          type="text"
+          id="description"
+          placeholder="DESCRIPCIÓN"
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+        />
         <div className="form-group2-2">
           <div className="form-group">
             <label>FECHA INICIO</label>

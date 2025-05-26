@@ -118,3 +118,54 @@ def tournament_matches(request, tournament_id):
     matches = Match.objects.filter(tournament=tournament)
     serializer = MatchSerializer(matches, many=True)
     return Response(serializer.data)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def tournament_participants(request, tournament_id):
+    """
+    Obtiene todos los participantes de un torneo con sus puntos
+    """
+    try:
+        tournament = get_object_or_404(Tournament, id=tournament_id)
+        
+        participants_data = []
+        tournament_participants = TournamentParticipant.objects.filter(
+            tournament=tournament
+        ).select_related('user')  # 👈 corregido aquí
+        
+        for tp in tournament_participants:
+            participant_info = {
+                'id': tp.user.id,
+                'username': tp.user.username,
+                'email': tp.user.email,
+                'elo': getattr(tp.user, 'elo', 1200),  # si tu modelo User tiene elo
+                'points': 0,  # aún no tenés campo 'points' en el modelo
+                'wins': 0,
+                'losses': 0,
+                'draws': 0,
+                'joined_at': tp.joined_at
+            }
+            participants_data.append(participant_info)
+        
+        # Ordenar por puntos (descendente)
+        participants_data.sort(key=lambda x: x['points'], reverse=True)
+        
+        return Response({
+            'tournament_id': tournament_id,
+            'tournament_name': tournament.name,
+            'total_participants': len(participants_data),
+            'participants': participants_data
+        }, status=status.HTTP_200_OK)
+        
+    except Tournament.DoesNotExist:
+        return Response(
+            {'error': 'Tournament not found'}, 
+            status=status.HTTP_404_NOT_FOUND
+        )
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        return Response(
+            {'error': f'An error occurred: {str(e)}'}, 
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR
+        )

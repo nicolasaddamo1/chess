@@ -7,6 +7,8 @@ from django.utils import timezone
 from .models import Match
 from .serializers import MatchSerializer, MatchCreateSerializer, MatchUpdateSerializer
 from django.db import models
+from tournaments.models import Tournament
+
 
 @api_view(['GET', 'POST'])
 @permission_classes([IsAuthenticated])
@@ -62,6 +64,40 @@ def match_detail(request, match_id):
     elif request.method == 'DELETE':
         match.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+    
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])  # Ajusta los permisos según tus necesidades
+def match_tournament_detail(request, tournament_id):
+    """
+    Obtiene todos los matches de un torneo específico
+    """
+    try:
+        # Verificar que el torneo existe
+        tournament = get_object_or_404(Tournament, id=tournament_id)
+        
+        # Filtrar matches por tournament_id
+        matches = Match.objects.filter(tournament_id=tournament_id).order_by('round_number', 'created_at')
+        
+        # Serializar los datos
+        serializer = MatchSerializer(matches, many=True)
+        
+        return Response({
+            'tournament_id': tournament_id,
+            'tournament_name': tournament.name,  # Asumiendo que Tournament tiene campo 'name'
+            'total_matches': matches.count(),
+            'matches': serializer.data
+        }, status=status.HTTP_200_OK)
+        
+    except Tournament.DoesNotExist:
+        return Response(
+            {'error': 'Tournament not found'}, 
+            status=status.HTTP_404_NOT_FOUND
+        )
+    except Exception as e:
+        return Response(
+            {'error': 'An error occurred while fetching matches'}, 
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])

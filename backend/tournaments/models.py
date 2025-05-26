@@ -14,6 +14,7 @@ class Tournament(models.Model):
         ('blitz', 'Blitz'),
         ('rapid', 'Rápido'),
         ('classical', 'Clásico'),
+        ('bullet', 'Bullet'),
     ]
     
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)

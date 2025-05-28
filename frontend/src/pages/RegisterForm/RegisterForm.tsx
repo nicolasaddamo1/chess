@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import "./RegisterForm.css";
 
 const RegisterForm: React.FC = () => {
-  // Estados para los campos del formulario
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -12,18 +11,14 @@ const RegisterForm: React.FC = () => {
     passwordConfirm: "",
   });
 
-  // Estados para mostrar/ocultar contraseñas
   const [showPassword, setShowPassword] = useState(false);
   const [showPasswordConfirm, setShowPasswordConfirm] = useState(false);
 
-  // Estado para términos y condiciones
   const [acceptTerms, setAcceptTerms] = useState(false);
 
-  // Estado para manejar loading y errores
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
 
-  // Manejar cambios en los inputs
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({
@@ -32,7 +27,6 @@ const RegisterForm: React.FC = () => {
     }));
   };
 
-  // Alternar visibilidad de contraseña
   const handleShowPassword = () => {
     setShowPassword(!showPassword);
   };
@@ -41,11 +35,9 @@ const RegisterForm: React.FC = () => {
     setShowPasswordConfirm(!showPasswordConfirm);
   };
 
-  // Manejar envío del formulario
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Validaciones básicas
     if (!acceptTerms) {
       setError("Debes aceptar los términos y condiciones");
       return;
@@ -66,13 +58,12 @@ const RegisterForm: React.FC = () => {
     setError("");
 
     try {
-      // Preparar datos para enviar
       const dataToSend = {
         username: formData.username,
         password: formData.password,
         password_confirm: formData.passwordConfirm,
         email: formData.email,
-        elo: 2000, // Valor por defecto
+        elo: 2000,
         first_name: formData.firstName,
         last_name: formData.lastName
       };
@@ -88,10 +79,8 @@ const RegisterForm: React.FC = () => {
       if (response.ok) {
         const result = await response.json();
         console.log("Registro exitoso:", result);
-        // Aquí puedes redirigir o mostrar mensaje de éxito
         alert("Registro exitoso!");
 
-        // Limpiar formulario
         setFormData({
           firstName: "",
           lastName: "",

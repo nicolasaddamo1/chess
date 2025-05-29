@@ -1,12 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import TournamentModalForm from './TournamentModalForm';
-import './Torneos.css';
-import './TournamentModalForm.css';
-
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import TournamentModalForm from "./TournamentModalForm";
+import "./Torneos.css";
+import "./TournamentModalForm.css";
 
 const token = localStorage.getItem("authToken");
-
 
 type Torneo = {
     created_at: string;
@@ -17,13 +15,11 @@ type Torneo = {
     max_players: number;
     mode: string;
     name: string;
-    prize: string
+    prize: string;
     start_date: string;
     start_time: string;
     status: string;
     updated_at: string;
-
-
 };
 
 type Encuentro = {
@@ -54,8 +50,7 @@ type Match = {
     tournament: Torneo;
     updated_at: string;
     winner: Player | null;
-
-}
+};
 
 type Participant = {
     id: string;
@@ -69,15 +64,13 @@ type Participant = {
     username: string;
 };
 
-
-
-type VistaTorneo = 'empty' | 'list' | 'detail';
+type VistaTorneo = "empty" | "list" | "detail";
 
 const TournamentForm: React.FC = () => {
     const [matches, setMatches] = useState<Match[]>([]);
     const [participants, setParticipants] = useState<Participant[]>([]);
 
-    const [view, setView] = useState<VistaTorneo>('list');
+    const [view, setView] = useState<VistaTorneo>("list");
     const [torneos, setTorneos] = useState<Torneo[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
@@ -85,50 +78,84 @@ const TournamentForm: React.FC = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        const fetchTorneos = async () => {
-            const token = localStorage.getItem('authToken');
-            if (!token) {
-                navigate('/login');
-                return;
-            }
+        document.body.classList.add("#root");
+
+        return () => {
+            document.body.classList.remove("#root");
+        };
+    }, []);
+
+    useEffect(() => {
+        const fetchMatches = async (torneoId: string) => {
             try {
-                const response = await fetch(`http://127.0.0.1:8000/api/tournaments/`,
+                const response = await fetch(
+                    `http://127.0.0.1:8000/api/matches/tournament/${torneoId}/`,
                     {
+                        method: "GET",
                         headers: {
                             Authorization: `Bearer ${token}`,
+                            "Content-Type": "application/json",
                         },
                     }
                 );
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                console.log("Match data:", data);
+                console.log("Matches array:", data.matches);
+                setMatches(data.matches || []);
+            } catch (error) {
+                console.error("Error fetching matches:", error);
+            }
+        };
+
+        const fetchTorneos = async () => {
+            const token = localStorage.getItem("authToken");
+            if (!token) {
+                navigate("/login");
+                return;
+            }
+            try {
+                const response = await fetch(`http://127.0.0.1:8000/api/tournaments/`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
                 const data: Torneo[] = await response.json();
                 console.log("Torneos:", data);
 
                 if (data.length === 0) {
-                    setView('empty');
+                    setView("empty");
                 } else {
                     setTorneos(data);
-                    setView('list');
+                    setView("list");
                 }
             } catch (error) {
-                console.error('Error fetching torneos:', error);
-                setView('empty');
+                console.error("Error fetching torneos:", error);
+                setView("empty");
             } finally {
                 setLoading(false);
             }
         };
-
         fetchTorneos();
+        fetchMatches("ba95cbe0-2a63-4ae3-81d7-ba7879a7eba8");
     }, []);
 
     const handleViewTorneo = async (torneoId: string) => {
-
         try {
-            const response = await fetch(`http://127.0.0.1:8000/api/matches/tournament/${torneoId}/`, {
-                method: 'GET',
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    'Content-Type': 'application/json',
+            const response = await fetch(
+                `http://127.0.0.1:8000/api/matches/tournament/${torneoId}/`,
+                {
+                    method: "GET",
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        "Content-Type": "application/json",
+                    },
                 }
-            });
+            );
 
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
@@ -136,19 +163,14 @@ const TournamentForm: React.FC = () => {
 
             const data = await response.json();
 
-            console.log('Match data:', data);
-            console.log('Matches array:', data.matches);
+            console.log("Match data:", data);
+            console.log("Matches array:", data.matches);
 
             setMatches(data.matches || []);
-
-
-
         } catch (error) {
-            console.error('Error fetching matches:', error);
+            console.error("Error fetching matches:", error);
             setMatches([]);
         }
-
-
     };
 
     const handleSubmitTournament = async (tournamentData: {
@@ -165,24 +187,24 @@ const TournamentForm: React.FC = () => {
                     Authorization: `Bearer ${token}`,
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify(tournamentData)
+                body: JSON.stringify(tournamentData),
             });
 
-            if (!response.ok) throw new Error('Error al crear torneo');
+            if (!response.ok) throw new Error("Error al crear torneo");
 
             const data = await response.json();
             setTorneos([...torneos, data]);
-            setView('list');
+            setView("list");
         } catch (error) {
             throw error;
         }
     };
 
     const handleBack = () => {
-        if (view === 'detail') {
-            setView('list');
+        if (view === "detail") {
+            setView("list");
         } else {
-            navigate('/');
+            navigate("/");
         }
     };
 
@@ -191,55 +213,77 @@ const TournamentForm: React.FC = () => {
     }
     const handleParticipats = async (torneoId: string) => {
         try {
-            const response = await fetch(`http://127.0.0.1:8000/api/tournaments/${torneoId}/participants/`, {
-                method: 'GET',
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    'Content-Type': 'application/json',
+            const response = await fetch(
+                `http://127.0.0.1:8000/api/tournaments/${torneoId}/participants/`,
+                {
+                    method: "GET",
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        "Content-Type": "application/json",
+                    },
                 }
-            });
+            );
 
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
 
             const data = await response.json();
-            console.log('Participants data:', data);
+            console.log("Participants data:", data);
             setParticipants(data.participants || []);
-
+        } catch (error) {
+            console.error("Error fetching participants:", error);
         }
-        catch (error) {
-            console.error('Error fetching participants:', error);
-        }
+    };
 
-    }
+
+
+
     return (
         <div className="torneos-container" style={{ width: "100%" }}>
             {/* Header con botón de volver */}
             <header className="torneos-header">
-                <button onClick={handleBack} className="back-button">
-                    ←
-                </button>
-                <button>🐞</button>
-                <button onClick={() => {
-                    if (view !== 'list') {
-                        setView('list')
-
-                    } else { setView('empty') }
-                }
-                }>ℹ</button>
-                <button>📜</button>
-                <button>⚙</button>
+                <div className="header-1">
+                    <button onClick={handleBack} className="back-button">
+                        <img src="tournament-arrow-back.png" alt="" />
+                    </button>
+                </div>
+                <div className="header-2">
+                    <button>
+                        <img src="tournament-bug.png" alt="" />
+                    </button>
+                    <button
+                        onClick={() => {
+                            if (view !== "list") {
+                                setView("list");
+                            } else {
+                                setView("empty");
+                            }
+                        }}
+                    >
+                        <img src="tournament-i.png" alt="" />
+                    </button>
+                    <button>
+                        <img src="tournament-list.png" alt="" />
+                    </button>
+                    <button>
+                        <img src="tournament-settings.png" alt="" />
+                    </button>
+                </div>
             </header>
 
             {/* Contenido principal según la vista */}
             <main className="torneos-main">
-                {view === 'empty' && (
+                {view === "empty" && (
                     <div className="empty-state">
                         <p>No hay torneos disponibles</p>
                         <button
-                            onClick={() => (setIsModalOpen(true))}
+                            onClick={() => setIsModalOpen(true)}
                             className="create-button"
+                            style={{
+                                backgroundColor: "rgb(249, 225, 151) ",
+                                color: "rgb(224, 48, 86)",
+                            }}
                         >
                             CREAR
                         </button>
@@ -250,97 +294,112 @@ const TournamentForm: React.FC = () => {
                         <TournamentModalForm
                             onClose={() => setIsModalOpen(false)}
                             onSubmit={handleSubmitTournament}
-
                         />
                     </div>
                 )}
-
-                {view === 'list' && (
+                {view === "list" && (
                     <div className="torneos-list">
+                        {/* Cabecera */}
+                        <div className="torneo-header">
+                            <div className="header-item"><strong>NOMBRE</strong></div>
+                            <div className="header-item"><strong>FECHA INICIO</strong></div>
+                            <div className="header-item"><strong>MODO</strong></div>
+                            <div className="header-item"><strong>1er PREMIO</strong></div>
+                            <div className="header-item"><strong>ACCIÓN</strong></div>
+                        </div>
+
+                        {/* Lista de torneos */}
                         {torneos.map((torneo) => (
                             <div
                                 key={torneo.id}
                                 className="torneo-card"
                                 onClick={() => handleViewTorneo(torneo.id)}
                             >
-                                <h3>{torneo.name}</h3>
-                                <div className="torneo-info">
-                                    <p><strong>FECHA DE INICIO:</strong> {torneo.start_date}</p>
-                                    <p><strong>MODO:</strong> {torneo.mode}</p>
-                                    <p><strong>PREMIOS:</strong></p>
-                                    <ul>
-                                        <li>1er puesto: {torneo.prize} pts</li>
-                                        <li>2do puesto: {(torneo.prize)} pts</li>
-                                    </ul>
-                                </div>
-                                <div className="torneo-actions">
-                                    <button className="view-button" onClick={() => {
-                                        setView(view === 'list' ? 'detail' : 'list');
-                                        handleParticipats(torneo.id);
-
-                                    }}>👁️</button>
+                                <div className="torneo-row">
+                                    <div className="torneo-item"><strong>{torneo.name}</strong></div>
+                                    <div className="torneo-item">{torneo.start_date}</div>
+                                    <div className="torneo-item">{torneo.mode}</div>
+                                    <div className="torneo-item">{torneo.prize} pts</div>
+                                    <div className="torneo-item">
+                                        <button
+                                            className="view-button"
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                setView(view === "list" ? "detail" : "list");
+                                                handleParticipats(torneo.id);
+                                            }}
+                                        >
+                                            👁️ Ver
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         ))}
                     </div>
                 )}
 
-                {view === 'detail' && (
-                    <div>
-                        <div className="torneos-grid">
-                            <div className="table-container">
-                                <table>
-                                    <thead>
-                                        <tr>
-                                            <th>Nombre</th>
-                                            <th>ELO</th>
-                                            <th>Puntos</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {participants.map((participant) => (
-                                            console.log("participant", participant),
-                                            <tr key={participant.id}>
-                                                <td>{participant.username}</td>
-                                                <td>{participant.elo}</td>
-                                                <td>{participant.points}</td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
-                            </div>
+                {view === "detail" && (
+                    <div className="torneos-detail">
+                        {/* Sección de Participantes */}
+                        <div className="section">
+                            <h3>Participantes del Torneo</h3>
+                            <div className="table-grid">
+                                <div className="table-header">
+                                    <div className="header-item"><strong>NOMBRE</strong></div>
+                                    <div className="header-item"><strong>ELO</strong></div>
+                                    <div className="header-item"><strong>PUNTOS</strong></div>
+                                </div>
 
-                            <div className="table-container">
-                                <table>
-                                    <thead>
-                                        <tr>
-                                            <th>Partida</th>
-                                            <th>Estado</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {matches.map((match) => (
-                                            <tr key={match.id}>
-                                                <td>{match.white_player.username} vs {match.black_player.username}</td>
-                                                <td>{match.status === 'in_progress' ? 'En progreso' : 'Finalizada'}</td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
+                                {participants.map((participant) => (
+                                    <div key={participant.id} className="table-row">
+                                        <div className="table-item">{participant.username}</div>
+                                        <div className="table-item">{participant.elo}</div>
+                                        <div className="table-item">{participant.points}</div>
+                                    </div>
+                                ))}
                             </div>
                         </div>
 
-                    </div>
+                        {/* Sección de Partidas */}
+                        <div className="section">
+                            <h3>Partidas del Torneo</h3>
+                            <div className="table-grid">
+                                <div className="table-header">
+                                    <div className="header-item wide"><strong>PARTIDA</strong></div>
+                                    <div className="header-item"><strong>ESTADO</strong></div>
+                                </div>
 
+                                {matches.map((match) => (
+                                    <div key={match.id} className="table-row">
+                                        <div className="table-item wide">
+                                            {match.white_player.username} vs {match.black_player.username}
+                                        </div>
+                                        <div className="table-item">
+                                            {match.status === "in_progress" ? "En progreso" : "Finalizada"}
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
                 )}
             </main>
 
             {/* Footer con botones */}
             <footer className="torneos-footer">
-                <button>🏆</button>
-                <button>🤲</button>
-                <button>↔</button>
-                <button>🛒</button>
+                <div className="footer-1">
+                    <img src="eye-pass-logo.png" alt="" />
+                    <img src="tournament-cup.png" alt="" />
+                </div>
+                <div className="footer-2">
+                    <img
+                        src="tournament-hands.png
+          "
+                        alt=""
+                    />
+                    <img src="tournament-z.png" alt="" />
+                    <img src="tournament-carrito.png" alt="" />
+                </div>
             </footer>
         </div>
     );

@@ -1,0 +1,160 @@
+.torneos-header {
+    background-color: rgb(26, 26, 26);
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    margin-top: 0%;
+    padding: 10px;
+}
+
+.back-button img {
+    margin: 20px;
+    padding: 0;
+    width: 69px !important;
+    height: 100%;
+}
+
+.header-2 {
+    margin: 30px;
+    padding: 0;
+}
+
+.header-2 img {
+    padding: 0;
+    margin: 0;
+    width: 45px;
+}
+
+.header-2 button {
+    padding: 3px;
+}
+
+.torneos-footer {
+    background-color: rgb(224, 48, 86);
+    display: flex;
+    justify-content: space-between;
+    padding: 20px;
+    margin-top: 10px;
+}
+
+.torneos-footer img {
+    width: 60px;
+    height: 100%;
+}
+
+.footer-1 {
+    display: flex;
+    gap: 10px;
+}
+
+.footer-2 {
+    display: flex;
+    gap: 10px;
+}
+
+.torneos-list {
+    width: 100%;
+    font-family: Arial, sans-serif;
+}
+
+.torneo-header,
+.torneo-row {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr 1fr;
+    gap: 10px;
+    padding: 12px 15px;
+    align-items: center;
+}
+
+.torneo-header {
+    background-color: #232323;
+    font-weight: bold;
+    border-bottom: 2px solid #ddd;
+}
+
+.torneo-card {
+    border-bottom: 1px solid #eee;
+    cursor: pointer;
+}
+
+.torneo-card:hover {
+    background-color: #f9f9f9;
+}
+
+.view-button {
+    background: none;
+    border: 1px solid #ddd;
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.view-button:hover {
+    background-color: #e0e0e0;
+}
+
+.torneos-detail {
+    width: 100%;
+    font-family: Arial, sans-serif;
+    color: #ffffff;
+}
+
+.section {
+    margin-bottom: 30px;
+}
+
+.section h3 {
+    color: #ffffff;
+    border-bottom: 2px solid #444;
+    padding-bottom: 8px;
+    margin-bottom: 15px;
+}
+
+.table-grid {
+    width: 100%;
+}
+
+.table-header,
+.table-row {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    /* Para participantes */
+    gap: 10px;
+    padding: 12px 15px;
+    align-items: center;
+}
+
+.table-header {
+    background-color: #333;
+    font-weight: bold;
+    border-bottom: 2px solid #555;
+}
+
+.table-row {
+    border-bottom: 1px solid #444;
+}
+
+.table-row:nth-child(even) {
+    background-color: #161616;
+}
+
+.table-row:nth-child(odd) {
+    background-color: #444444;
+}
+
+/* Para la tabla de partidas */
+.table-header .wide,
+.table-item.wide {
+    grid-column: span 2;
+}
+
+/* Ajuste para la tabla de partidas (solo 2 columnas) */
+.table-grid.matches {
+    grid-template-columns: 3fr 1fr;
+}
+
+/* Estilos consistentes con la vista anterior */
+.header-item,
+.table-item {
+    padding: 5px;
+}

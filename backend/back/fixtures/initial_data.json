@@ -1,0 +1,165 @@
+[
+    {
+        "model": "auth.user",
+        "pk": 1,
+        "fields": {
+            "password": "pbkdf2_sha256$1000000$VsnRAsOdEY3g51P1XrTuwF$cwWbhN7YEGMuNdxTEMeisG1iSYLAfy1CEqgA2pdORhU=",
+            "last_login": null,
+            "is_superuser": false,
+            "username": "testuser",
+            "first_name": "Test",
+            "last_name": "User",
+            "email": "test@example.com",
+            "is_staff": false,
+            "is_active": true,
+            "date_joined": "2025-05-22T23:41:44.458633-03:00",
+            "groups": [],
+            "user_permissions": []
+        }
+    },
+    {
+        "model": "auth.user",
+        "pk": 2,
+        "fields": {
+            "password": "pbkdf2_sha256$1000000$agYOtvM7BQQ0fVBlPhpTgL$ql/ENbzIiNcF92Lqyj7bkQdD6iVB3SG8RUM69TtA6Jc=",
+            "last_login": null,
+            "is_superuser": true,
+            "username": "Elda",
+            "first_name": "Daro",
+            "last_name": "Guaraz",
+            "email": "darioguaraz@gmail.com",
+            "is_staff": true,
+            "is_active": true,
+            "date_joined": "2025-05-22T23:26:25.654123-03:00",
+            "groups": [],
+            "user_permissions": []
+        }
+    },
+    {
+        "model": "auth.user",
+        "pk": 3,
+        "fields": {
+            "password": "pbkdf2_sha256$1000000$Oa7vPhOolR6vaj73MWbPXI$h1JaxniTYr40To7S/PIk+3iiiFVetvMWLwxcmi5w4jc=",
+            "last_login": null,
+            "is_superuser": false,
+            "username": "nicoaddamo",
+            "first_name": "nico",
+            "last_name": "addamo",
+            "email": "nico@gmail.com",
+            "is_staff": false,
+            "is_active": true,
+            "date_joined": "2025-05-28T14:46:13.677743-03:00",
+            "groups": [],
+            "user_permissions": []
+        }
+    },
+    {
+        "model": "back.userprofile",
+        "pk": 1,
+        "fields": {
+            "user": 1,
+            "elo": 1200,
+            "score": 0
+        }
+    },
+    {
+        "model": "back.userprofile",
+        "pk": 2,
+        "fields": {
+            "user": 2,
+            "elo": 1200,
+            "score": 0
+        }
+    },
+    {
+        "model": "back.userprofile",
+        "pk": 3,
+        "fields": {
+            "user": 3,
+            "elo": 1200,
+            "score": 0
+        }
+    },
+    {
+        "model": "back.tournament",
+        "pk": "ba95cbe0-2a63-4ae3-81d7-ba7879a7eba8",
+        "fields": {
+            "name": "Torneo de Prueba",
+            "start_date": "2025-06-01",
+            "start_time": "15:00:00",
+            "mode": "rapid",
+            "prize": "0.00",
+            "description": "",
+            "max_players": 16,
+            "status": "pending",
+            "created_at": "2025-05-23T00:04:44.491543-03:00",
+            "updated_at": "2025-05-23T00:04:44.491564-03:00"
+        }
+    },
+    {
+        "model": "back.tournament",
+        "pk": "fc24d330-7738-4d71-9538-468ac551d842",
+        "fields": {
+            "name": "torneo one",
+            "start_date": "2025-08-01",
+            "start_time": "11:11:00",
+            "mode": "classical",
+            "prize": "0.00",
+            "description": "descripcion copada",
+            "max_players": 16,
+            "status": "pending",
+            "created_at": "2025-05-25T21:24:29.848803-03:00",
+            "updated_at": "2025-05-25T21:24:29.848857-03:00"
+        }
+    },
+    {
+        "model": "back.tournament",
+        "pk": "b34ca5e5-88db-4f8f-b4f9-e4957af3e46f",
+        "fields": {
+            "name": "Torrrrneo",
+            "start_date": "2025-02-01",
+            "start_time": "11:11:00",
+            "mode": "bullet",
+            "prize": "0.00",
+            "description": "que quilombo",
+            "max_players": 16,
+            "status": "pending",
+            "created_at": "2025-05-25T21:26:38.486602-03:00",
+            "updated_at": "2025-05-25T21:26:38.486614-03:00"
+        }
+    },
+    {
+        "model": "back.tournament",
+        "pk": "57eb2716-4169-43fd-bf97-ef86e58b41e8",
+        "fields": {
+            "name": "torne",
+            "start_date": "2025-12-12",
+            "start_time": "11:11:00",
+            "mode": "classical",
+            "prize": "5000.00",
+            "description": "aaaaa",
+            "max_players": 16,
+            "status": "pending",
+            "created_at": "2025-05-25T23:28:55.430524-03:00",
+            "updated_at": "2025-05-25T23:28:55.430545-03:00"
+        }
+    },
+    {
+        "model": "back.tournamentparticipant",
+        "pk": "85abc3ad-b237-499d-8f09-bb31ce8bff2c",
+        "fields": {
+            "tournament": "ba95cbe0-2a63-4ae3-81d7-ba7879a7eba8",
+            "user": 1,
+            "joined_at": "2025-05-25T23:56:09.520118-03:00"
+        }
+    },
+    {
+        "model": "back.tournamentparticipant",
+        "pk": "48a8ceb1-6bd7-43a2-83cd-bd1586431b38",
+        "fields": {
+            "tournament": "ba95cbe0-2a63-4ae3-81d7-ba7879a7eba8",
+            "user": 2,
+            "joined_at": "2025-05-25T23:56:09.739383-03:00"
+        }
+    }
+]
